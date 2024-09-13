@@ -2,6 +2,7 @@ from django.shortcuts import render
 from .forms import ApplicationForm
 from .models import Form
 from django.contrib import messages
+from django.core.mail import EmailMessage
 
 # Create your views here.
 
@@ -17,6 +18,15 @@ def index(request):
 
             Form.objects.create(first_name=first_name, last_name=last_name,
                                 email=email, date=date, occupation=occupation)
+
+            # Email message
+            message_body = (f"Thank you for your job application submission, {first_name}. "
+                            f"Here is what you sent: \n{first_name}\n"
+                            f"{last_name}\n{date}\n"
+                            f"Thank you!")
+            email_message = EmailMessage("Form submission conformation",
+                                         message_body, to=[email])
+            email_message.send()
 
             messages.success(request, "Form submitted successfully")
 
